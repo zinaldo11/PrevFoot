@@ -40,9 +40,9 @@ with abas[0]:
     headers = {
         "x-apisports-key": API_KEY
     }
-    def buscar_times(nome, temporada):
+    def buscar_times(nome):
         try:
-            url = f"{API_URL}teams?search={nome}&season={temporada}"
+            url = f"{API_URL}teams?search={nome}"
             r = requests.get(url, headers=headers, timeout=10)
             r.raise_for_status()
             data = r.json()
@@ -57,8 +57,8 @@ with abas[0]:
             return [], f"Erro na busca: {e}"
     if buscar and time_a_nome and time_b_nome:
         with st.spinner("Buscando times..."):
-            times_a, erro_a = buscar_times(time_a_nome, temporada_a)
-            times_b, erro_b = buscar_times(time_b_nome, temporada_b)
+            times_a, erro_a = buscar_times(time_a_nome)
+            times_b, erro_b = buscar_times(time_b_nome)
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Times compatíveis - Mandante")
