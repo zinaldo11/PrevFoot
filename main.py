@@ -110,8 +110,7 @@ with abas[1]:
         if 'idx_a' in locals() and 'idx_b' in locals():
             time_a_id = times_a[idx_a]['team']['id']
             time_b_id = times_b[idx_b]['team']['id']
-            temporada_a = times_a[idx_a]['league']['season']
-            temporada_b = times_b[idx_b]['league']['season']
+            # temporada_a e temporada_b já vêm do selectbox na aba anterior
             headers = {"x-apisports-key": API_KEY}
             def buscar_jogos(time_id, temporada, mando):
                 try:
