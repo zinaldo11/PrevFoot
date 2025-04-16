@@ -66,7 +66,19 @@ with abas[0]:
             idx_a = st.selectbox("Selecione o Time A", options=range(len(opcoes_a)), format_func=lambda i: opcoes_a[i])
             st.image(times_a[idx_a]['team']['logo'], width=60)
         else:
-            st.info("Digite e busque pelo nome do time.")
+            st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
+            if buscar and time_a_nome:
+                # Sugestão: mostrar times retornados pela API para busca parecida
+                url_sug = f"{API_URL}teams?search={time_a_nome[:3]}"
+                try:
+                    r_sug = requests.get(url_sug, headers=headers, timeout=10)
+                    r_sug.raise_for_status()
+                    data_sug = r_sug.json().get('response', [])
+                    if data_sug:
+                        nomes_sug = [t['team']['name'] for t in data_sug]
+                        st.write('Sugestões:', ', '.join(nomes_sug))
+                except Exception:
+                    pass
     with col2:
         st.subheader("Times compatíveis - Visitante")
         if erro_b:
@@ -76,7 +88,18 @@ with abas[0]:
             idx_b = st.selectbox("Selecione o Time B", options=range(len(opcoes_b)), format_func=lambda i: opcoes_b[i])
             st.image(times_b[idx_b]['team']['logo'], width=60)
         else:
-            st.info("Digite e busque pelo nome do time.")
+            st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
+            if buscar and time_b_nome:
+                url_sug = f"{API_URL}teams?search={time_b_nome[:3]}"
+                try:
+                    r_sug = requests.get(url_sug, headers=headers, timeout=10)
+                    r_sug.raise_for_status()
+                    data_sug = r_sug.json().get('response', [])
+                    if data_sug:
+                        nomes_sug = [t['team']['name'] for t in data_sug]
+                        st.write('Sugestões:', ', '.join(nomes_sug))
+                except Exception:
+                    pass
 
 with abas[1]:
     st.header("Jogos Analisados")
