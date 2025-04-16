@@ -69,6 +69,7 @@ with abas[0]:
             opcoes_a = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_a]
             idx_a = st.selectbox("Selecione o Time A", options=range(len(opcoes_a)), format_func=lambda i: opcoes_a[i], key="select_time_a")
             st.image(times_a[idx_a]['team']['logo'], width=60)
+            temporada_a = st.selectbox("Selecione a temporada do Time A", options=[2020,2021,2022,2023,2024,2025], key="temporada_a")
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_a_nome:
@@ -90,6 +91,7 @@ with abas[0]:
             opcoes_b = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_b]
             idx_b = st.selectbox("Selecione o Time B", options=range(len(opcoes_b)), format_func=lambda i: opcoes_b[i], key="select_time_b")
             st.image(times_b[idx_b]['team']['logo'], width=60)
+            temporada_b = st.selectbox("Selecione a temporada do Time B", options=[2020,2021,2022,2023,2024,2025], key="temporada_b")
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_b_nome:
