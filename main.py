@@ -29,11 +29,6 @@ with abas[0]:
     st.markdown("Digite os nomes dos times e selecione as temporadas (2020-2025):")
     time_a_nome = st.text_input("Time A (Mandante)")
     time_b_nome = st.text_input("Time B (Visitante)")
-    col1, col2 = st.columns(2)
-    with col1:
-        temporada_a = st.selectbox("Temporada Time A", options=[str(y) for y in range(2025, 2019, -1)])
-    with col2:
-        temporada_b = st.selectbox("Temporada Time B", options=[str(y) for y in range(2025, 2019, -1)])
     buscar = st.button("Buscar Times")
     times_a, times_b = [], []
     erro_a, erro_b = None, None
@@ -55,10 +50,16 @@ with abas[0]:
                 return [], f"Nenhum time encontrado. Erro API: {erro_api}"
         except Exception as e:
             return [], f"Erro na busca: {e}"
-    if buscar and time_a_nome and time_b_nome:
-        with st.spinner("Buscando times..."):
+
+    # Passo 2: Buscar times parecidos e deixar o usuário selecionar o time correto
+    idx_a, idx_b = None, None
+    if buscar and time_a_nome:
+        with st.spinner("Buscando times mandante..."):
             times_a, erro_a = buscar_times(time_a_nome)
+    if buscar and time_b_nome:
+        with st.spinner("Buscando times visitante..."):
             times_b, erro_b = buscar_times(time_b_nome)
+
     col1, col2 = st.columns(2)
     with col1:
         st.subheader("Times compatíveis - Mandante")
@@ -66,12 +67,11 @@ with abas[0]:
             st.error(erro_a)
         elif times_a:
             opcoes_a = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_a]
-            idx_a = st.selectbox("Selecione o Time A", options=range(len(opcoes_a)), format_func=lambda i: opcoes_a[i])
+            idx_a = st.selectbox("Selecione o Time A", options=range(len(opcoes_a)), format_func=lambda i: opcoes_a[i], key="select_time_a")
             st.image(times_a[idx_a]['team']['logo'], width=60)
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_a_nome:
-                # Sugestão: mostrar times retornados pela API para busca parecida
                 url_sug = f"{API_URL}teams?search={time_a_nome[:3]}"
                 try:
                     r_sug = requests.get(url_sug, headers=headers, timeout=10)
@@ -88,7 +88,7 @@ with abas[0]:
             st.error(erro_b)
         elif times_b:
             opcoes_b = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_b]
-            idx_b = st.selectbox("Selecione o Time B", options=range(len(opcoes_b)), format_func=lambda i: opcoes_b[i])
+            idx_b = st.selectbox("Selecione o Time B", options=range(len(opcoes_b)), format_func=lambda i: opcoes_b[i], key="select_time_b")
             st.image(times_b[idx_b]['team']['logo'], width=60)
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
