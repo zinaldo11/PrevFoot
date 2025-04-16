@@ -46,10 +46,13 @@ with abas[0]:
             r = requests.get(url, headers=headers, timeout=10)
             r.raise_for_status()
             data = r.json()
+            # DEBUG: Exibe a resposta bruta da API na tela
+            st.write("DEBUG resposta API:", data)
             if data.get("response"):
                 return data["response"], None
             else:
-                return [], "Nenhum time encontrado."
+                erro_api = data.get("errors")
+                return [], f"Nenhum time encontrado. Erro API: {erro_api}"
         except Exception as e:
             return [], f"Erro na busca: {e}"
     if buscar and time_a_nome and time_b_nome:
