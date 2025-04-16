@@ -66,10 +66,13 @@ with abas[0]:
         if erro_a:
             st.error(erro_a)
         elif times_a:
-            opcoes_a = [f"{t} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_a]
-            idx_a = st.selectbox("Selecione o Time A", options=range(len(opcoes_a)), format_func=lambda i: opcoes_a[i], key="select_time_a")
+            # Exibe informações completas e confiáveis para evitar ambiguidade
+            def format_time_a(i):
+                t = times_a[i]['team']
+                return f"{t['name']} ({t['country']}, fundado em {t['founded']})"
+            idx_a = st.selectbox("Selecione o Time A", options=range(len(times_a)), format_func=format_time_a, key="select_time_a")
             st.image(times_a[idx_a]['team']['logo'], width=60)
-            temporada_a = st.selectbox("Selecione a temporada do Time A", options=[2020,2021,2022,2023,2024,2025], key="temporada_a")  # Seleção manual, não depende do objeto time
+            temporada_a = st.selectbox("Selecione a temporada do Time A", options=[2020,2021,2022,2023,2024,2025], key="temporada_a")
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_a_nome:
@@ -79,8 +82,8 @@ with abas[0]:
                     r_sug.raise_for_status()
                     data_sug = r_sug.json().get('response', [])
                     if data_sug:
-                        nomes_sug = [t for t in data_sug]
-                        st.write('Sugestões:', ', '.join(nomes_sug))
+                        sugestoes = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in data_sug]
+                        st.write('Sugestões:', ', '.join(sugestoes))
                 except Exception:
                     pass
     with col2:
@@ -88,10 +91,12 @@ with abas[0]:
         if erro_b:
             st.error(erro_b)
         elif times_b:
-            opcoes_b = [f"{t} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_b]
-            idx_b = st.selectbox("Selecione o Time B", options=range(len(opcoes_b)), format_func=lambda i: opcoes_b[i], key="select_time_b")
+            def format_time_b(i):
+                t = times_b[i]['team']
+                return f"{t['name']} ({t['country']}, fundado em {t['founded']})"
+            idx_b = st.selectbox("Selecione o Time B", options=range(len(times_b)), format_func=format_time_b, key="select_time_b")
             st.image(times_b[idx_b]['team']['logo'], width=60)
-            temporada_b = st.selectbox("Selecione a temporada do Time B", options=[2020,2021,2022,2023,2024,2025], key="temporada_b")  # Seleção manual, não depende do objeto time
+            temporada_b = st.selectbox("Selecione a temporada do Time B", options=[2020,2021,2022,2023,2024,2025], key="temporada_b")
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_b_nome:
@@ -101,8 +106,8 @@ with abas[0]:
                     r_sug.raise_for_status()
                     data_sug = r_sug.json().get('response', [])
                     if data_sug:
-                        nomes_sug = [t for t in data_sug]
-                        st.write('Sugestões:', ', '.join(nomes_sug))
+                        sugestoes = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in data_sug]
+                        st.write('Sugestões:', ', '.join(sugestoes))
                 except Exception:
                     pass
 
