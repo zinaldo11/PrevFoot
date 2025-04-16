@@ -111,19 +111,25 @@ with abas[1]:
                     st.error(erro_ja)
                 elif jogos_a:
                     for j in jogos_a:
-    with st.expander(f"{j['fixture']['date'][:10]} - vs {j['teams']['away']['name']} ({j['goals']['home']}x{j['goals']['away']})"):
-        st.write(f"Liga: {j['league']['name']} ({j['league']['country']})")
-        # Buscar estatísticas detalhadas via API
-        try:
-            stats_url = f"{API_URL}fixtures/statistics?fixture={j['fixture']['id']}"
-            r_stats = requests.get(stats_url, headers=headers, timeout=10)
-            r_stats.raise_for_status()
-            stats_data = r_stats.json().get('response', [])
-        except Exception as e:
-            stats_data = []
-        if stats_data:
-            for team_stats in stats_data:
-                st.markdown(f"**{team_stats['team']['name']}**")
+                        with st.expander(f"{j['fixture']['date'][:10]} - vs {j['teams']['away']['name']} ({j['goals']['home']}x{j['goals']['away']})"):
+                            st.write(f"Liga: {j['league']['name']} ({j['league']['country']})")
+                            # Buscar estatísticas detalhadas via API
+                            try:
+                                stats_url = f"{API_URL}fixtures/statistics?fixture={j['fixture']['id']}"
+                                r_stats = requests.get(stats_url, headers=headers, timeout=10)
+                                r_stats.raise_for_status()
+                                stats_data = r_stats.json().get('response', [])
+                            except Exception as e:
+                                stats_data = []
+                            if stats_data:
+                                for team_stats in stats_data:
+                                    st.markdown(f"**{team_stats['team']['name']}**")
+                                    for item in team_stats['statistics']:
+                                        nome = item['type']
+                                        valor = item['value'] if item['value'] is not None else '-'
+                                        st.write(f"{nome}: {valor}")
+                            else:
+                                st.info("Sem estatísticas detalhadas disponíveis para este jogo.")
                 for item in team_stats['statistics']:
                     nome = item['type']
                     valor = item['value'] if item['value'] is not None else '-'
