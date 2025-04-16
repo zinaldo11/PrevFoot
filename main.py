@@ -130,12 +130,6 @@ with abas[1]:
                                         st.write(f"{nome}: {valor}")
                             else:
                                 st.info("Sem estatísticas detalhadas disponíveis para este jogo.")
-                for item in team_stats['statistics']:
-                    nome = item['type']
-                    valor = item['value'] if item['value'] is not None else '-'
-                    st.write(f"{nome}: {valor}")
-        else:
-            st.info("Sem estatísticas detalhadas disponíveis para este jogo.")
                 else:
                     st.info("Nenhum jogo encontrado.")
             with col2:
