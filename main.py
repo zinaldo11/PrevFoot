@@ -359,7 +359,7 @@ with abas[3]:
 
 with abas[4]:
     st.header("Placar Provável")
-    def prever_placar Wade(df_prev):
+    def prever_placar(df_prev):
         if df_prev is None or df_prev.empty:
             return None, None, None, None
         if 'Gols' in df_prev.index:
@@ -484,7 +484,7 @@ with abas[6]:
             if 'df_simples_b' in locals() and not df_simples_b.empty:
                 df_simples_b.to_excel(writer, sheet_name='Medias_Simples_Visitante')
             if 'df_pond_a' in locals() and not df_pond_a.empty:
-                df_pond_action_a.to_excel(writer, sheet_name='Medias_Ponderadas_Mandante')
+                df_pond_a.to_excel(writer, sheet_name='Medias_Ponderadas_Mandante')
             if 'df_pond_b' in locals() and not df_pond_b.empty:
                 df_pond_b.to_excel(writer, sheet_name='Medias_Ponderadas_Visitante')
             if 'df_prev' in locals() and not df_prev.empty:
