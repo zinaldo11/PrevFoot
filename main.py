@@ -66,10 +66,10 @@ with abas[0]:
         if erro_a:
             st.error(erro_a)
         elif times_a:
-            opcoes_a = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_a]
+            opcoes_a = [f"{t} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_a]
             idx_a = st.selectbox("Selecione o Time A", options=range(len(opcoes_a)), format_func=lambda i: opcoes_a[i], key="select_time_a")
             st.image(times_a[idx_a]['team']['logo'], width=60)
-            temporada_a = st.selectbox("Selecione a temporada do Time A", options=[2020,2021,2022,2023,2024,2025], key="temporada_a")
+            temporada_a = st.selectbox("Selecione a temporada do Time A", options=[2020,2021,2022,2023,2024,2025], key="temporada_a")  # Seleção manual, não depende do objeto time
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_a_nome:
@@ -79,7 +79,7 @@ with abas[0]:
                     r_sug.raise_for_status()
                     data_sug = r_sug.json().get('response', [])
                     if data_sug:
-                        nomes_sug = [t['team']['name'] for t in data_sug]
+                        nomes_sug = [t for t in data_sug]
                         st.write('Sugestões:', ', '.join(nomes_sug))
                 except Exception:
                     pass
@@ -88,10 +88,10 @@ with abas[0]:
         if erro_b:
             st.error(erro_b)
         elif times_b:
-            opcoes_b = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_b]
+            opcoes_b = [f"{t} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_b]
             idx_b = st.selectbox("Selecione o Time B", options=range(len(opcoes_b)), format_func=lambda i: opcoes_b[i], key="select_time_b")
             st.image(times_b[idx_b]['team']['logo'], width=60)
-            temporada_b = st.selectbox("Selecione a temporada do Time B", options=[2020,2021,2022,2023,2024,2025], key="temporada_b")
+            temporada_b = st.selectbox("Selecione a temporada do Time B", options=[2020,2021,2022,2023,2024,2025], key="temporada_b")  # Seleção manual, não depende do objeto time
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_b_nome:
@@ -101,7 +101,7 @@ with abas[0]:
                     r_sug.raise_for_status()
                     data_sug = r_sug.json().get('response', [])
                     if data_sug:
-                        nomes_sug = [t['team']['name'] for t in data_sug]
+                        nomes_sug = [t for t in data_sug]
                         st.write('Sugestões:', ', '.join(nomes_sug))
                 except Exception:
                     pass
@@ -112,7 +112,7 @@ with abas[1]:
         if 'idx_a' in locals() and 'idx_b' in locals():
             time_a_id = times_a[idx_a]['team']['id']
             time_b_id = times_b[idx_b]['team']['id']
-            # temporada_a e temporada_b já vêm do selectbox na aba anterior
+            # temporada_a e temporada_b vêm EXCLUSIVAMENTE do selectbox, nunca do objeto time
             headers = {"x-apisports-key": API_KEY}
             def buscar_jogos(time_id, temporada, mando):
                 try:
@@ -139,7 +139,7 @@ with abas[1]:
                 elif jogos_a:
                     for j in jogos_a:
                         with st.expander(f"{j['fixture']['date'][:10]} - vs {j['teams']['away']['name']} ({j['goals']['home']}x{j['goals']['away']})"):
-                            st.write(f"Liga: {j['league']['name']} ({j['league']['country']})")
+                            st.write(f"Liga: {j['name']} ({j['country']})")
                             # Buscar estatísticas detalhadas via API
                             try:
                                 stats_url = f"{API_URL}fixtures/statistics?fixture={j['fixture']['id']}"
@@ -150,7 +150,7 @@ with abas[1]:
                                 stats_data = []
                             if stats_data:
                                 for team_stats in stats_data:
-                                    st.markdown(f"**{team_stats['team']['name']}**")
+                                    st.markdown(f"**{team_stats}**")
                                     for item in team_stats['statistics']:
                                         nome = item['type']
                                         valor = item['value'] if item['value'] is not None else '-'
@@ -166,7 +166,7 @@ with abas[1]:
                 elif jogos_b:
                     for j in jogos_b:
                         with st.expander(f"{j['fixture']['date'][:10]} - vs {j['teams']['home']['name']} ({j['goals']['home']}x{j['goals']['away']})"):
-                            st.write(f"Liga: {j['league']['name']} ({j['league']['country']})")
+                            st.write(f"Liga: {j['name']} ({j['country']})")
                             # Buscar estatísticas detalhadas via API
                             try:
                                 stats_url = f"{API_URL}fixtures/statistics?fixture={j['fixture']['id']}"
@@ -177,7 +177,7 @@ with abas[1]:
                                 stats_data = []
                             if stats_data:
                                 for team_stats in stats_data:
-                                    st.markdown(f"**{team_stats['team']['name']}**")
+                                    st.markdown(f"**{team_stats}**")
                                     for item in team_stats['statistics']:
                                         nome = item['type']
                                         valor = item['value'] if item['value'] is not None else '-'
@@ -210,10 +210,10 @@ with abas[2]:
             # Identificar adversário e competição
             if tipo_mando == 'casa':
                 adversario = j['teams']['away']['name']
-                campeonato = j['league']['name']
+                campeonato = j['name']
             else:
                 adversario = j['teams']['home']['name']
-                campeonato = j['league']['name']
+                campeonato = j['name']
             peso = PESOS.get(campeonato, PESOS.get('Outro', 0.5))
             for team_stats in stats_data:
                 for item in team_stats['statistics']:
@@ -222,14 +222,14 @@ with abas[2]:
                     if valor is None or not isinstance(valor, (int, float)):
                         continue
                     # Médias simples
-                    estatisticas.setdefault(team_stats['team']['name'], {}).setdefault(nome, []).append(valor)
+                    estatisticas.setdefault(team_stats, {}).setdefault(nome, []).append(valor)
                     # Médias ponderadas
-                    if team_stats['team']['name'] == (j['teams']['home']['name'] if tipo_mando == 'casa' else j['teams']['away']['name']):
+                    if team_stats == (j['teams']['home']['name'] if tipo_mando == 'casa' else j['teams']['away']['name']):
                         # Feitas
-                        estatisticas_pond.setdefault(team_stats['team']['name'], {}).setdefault(nome, []).append(valor * peso)
+                        estatisticas_pond.setdefault(team_stats, {}).setdefault(nome, []).append(valor * peso)
                     else:
                         # Sofridas
-                        estatisticas_pond.setdefault(team_stats['team']['name'], {}).setdefault(nome, []).append(valor / peso if peso else valor)
+                        estatisticas_pond.setdefault(team_stats, {}).setdefault(nome, []).append(valor / peso if peso else valor)
         # Médias simples
         medias_simples = {}
         for time, stats in estatisticas.items():
