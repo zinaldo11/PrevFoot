@@ -35,6 +35,10 @@ if 'temporada_a' not in st.session_state:
     st.session_state.temporada_a = None
 if 'temporada_b' not in st.session_state:
     st.session_state.temporada_b = None
+if 'jogos_a' not in st.session_state:
+    st.session_state.jogos_a = []
+if 'jogos_b' not in st.session_state:
+    st.session_state.jogos_b = []
 
 # Tabs principais
 abas = st.tabs([
@@ -49,7 +53,7 @@ abas = st.tabs([
 
 with abas[0]:
     st.header("Seleção dos Times e Temporada")
-    st.markdown("Digite os nomes dos times e clique em 'Buscar' para selecionar o time e a temporada:")
+    st.markdown("Digite os nomes dos times e clique em 'Buscar Times' para selecionar os times e a temporada:")
     
     headers = {"x-apisports-key": API_KEY}
     
@@ -83,11 +87,6 @@ with abas[0]:
     with col1:
         st.subheader("Mandante")
         time_a_nome = st.text_input("Time A (Mandante)", key="time_a_input")
-        buscar_a = st.button("Buscar Time A")
-        
-        if buscar_a and time_a_nome.strip():
-            with st.spinner("Buscando times mandante..."):
-                st.session_state.times_a, st.session_state.erro_a = buscar_times(time_a_nome)
         
         if st.session_state.erro_a:
             st.error(st.session_state.erro_a)
@@ -120,16 +119,11 @@ with abas[0]:
             else:
                 st.warning("Nenhuma temporada encontrada para o time selecionado.")
         else:
-            st.warning("Digite um nome e clique em 'Buscar' para encontrar times.")
+            st.warning("Digite um nome e clique em 'Buscar Times' para encontrar times.")
         
     with col2:
         st.subheader("Visitante")
         time_b_nome = st.text_input("Time B (Visitante)", key="time_b_input")
-        buscar_b = st.button("Buscar Time B")
-        
-        if buscar_b and time_b_nome.strip():
-            with st.spinner("Buscando times visitante..."):
-                st.session_state.times_b, st.session_state.erro_b = buscar_times(time_b_nome)
         
         if st.session_state.erro_b:
             st.error(st.session_state.erro_b)
@@ -162,7 +156,17 @@ with abas[0]:
             else:
                 st.warning("Nenhuma temporada encontrada para o time selecionado.")
         else:
-            st.warning("Digite um nome e clique em 'Buscar' para encontrar times.")
+            st.warning("Digite um nome e clique em 'Buscar Times' para encontrar times.")
+    
+    # Botão único para buscar ambos os times
+    buscar = st.button("Buscar Times")
+    if buscar:
+        if not time_a_nome.strip() or not time_b_nome.strip():
+            st.error("Por favor, insira nomes válidos para ambos os times.")
+        else:
+            with st.spinner("Buscando times..."):
+                st.session_state.times_a, st.session_state.erro_a = buscar_times(time_a_nome)
+                st.session_state.times_b, st.session_state.erro_b = buscar_times(time_b_nome)
 
 with abas[1]:
     st.header("Jogos Analisados")
@@ -187,17 +191,17 @@ with abas[1]:
                 return [], f"Erro ao buscar jogos: {e}"
         
         with st.spinner("Buscando jogos do mandante..."):
-            jogos_a, erro_ja = buscar_jogos(time_a_id, temporada_a, 'casa')
+            st.session_state.jogos_a, erro_ja = buscar_jogos(time_a_id, temporada_a, 'casa')
         with st.spinner("Buscando jogos do visitante..."):
-            jogos_b, erro_jb = buscar_jogos(time_b_id, temporada_b, 'fora')
+            st.session_state.jogos_b, erro_jb = buscar_jogos(time_b_id, temporada_b, 'fora')
         
         col1, col2 = st.columns(2)
         with col1:
             st.subheader("Mandante - Últimos 10 jogos em casa")
             if erro_ja:
                 st.error(erro_ja)
-            elif jogos_a:
-                for j in jogos_a:
+            elif st.session_state.jogos_a:
+                for j in st.session_state.jogos_a:
                     with st.expander(f"{j['fixture']['date'][:10]} - vs {j['teams']['away']['name']} ({j['goals']['home']}x{j['goals']['away']})"):
                         st.write(f"Liga: {j['league']['name']} ({j['league']['country']})")
                         try:
@@ -224,8 +228,8 @@ with abas[1]:
             st.subheader("Visitante - Últimos 10 jogos fora")
             if erro_jb:
                 st.error(erro_jb)
-            elif jogos_b:
-                for j in jogos_b:
+            elif st.session_state.jogos_b:
+                for j in st.session_state.jogos_b:
                     with st.expander(f"{j['fixture']['date'][:10]} - vs {j['teams']['home']['name']} ({j['goals']['home']}x{j['goals']['away']})"):
                         st.write(f"Liga: {j['league']['name']} ({j['league']['country']})")
                         try:
@@ -355,7 +359,7 @@ with abas[3]:
 
 with abas[4]:
     st.header("Placar Provável")
-    def prever_placar(df_prev):
+    def prever_placar Wade(df_prev):
         if df_prev is None or df_prev.empty:
             return None, None, None, None
         if 'Gols' in df_prev.index:
@@ -480,7 +484,7 @@ with abas[6]:
             if 'df_simples_b' in locals() and not df_simples_b.empty:
                 df_simples_b.to_excel(writer, sheet_name='Medias_Simples_Visitante')
             if 'df_pond_a' in locals() and not df_pond_a.empty:
-                df_pond_a.to_excel(writer, sheet_name='Medias_Ponderadas_Mandante')
+                df_pond_action_a.to_excel(writer, sheet_name='Medias_Ponderadas_Mandante')
             if 'df_pond_b' in locals() and not df_pond_b.empty:
                 df_pond_b.to_excel(writer, sheet_name='Medias_Ponderadas_Visitante')
             if 'df_prev' in locals() and not df_prev.empty:
