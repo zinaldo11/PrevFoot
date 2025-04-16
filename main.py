@@ -67,12 +67,15 @@ with abas[0]:
             st.error(erro_a)
         elif times_a:
             # Exibe informações completas e confiáveis para evitar ambiguidade
-            def format_time_a(i):
-                t = times_a[i]['team']
-                return f"{t['name']} ({t['country']}, fundado em {t['founded']})"
-            idx_a = st.selectbox("Selecione o Time A", options=range(len(times_a)), format_func=format_time_a, key="select_time_a")
-            st.image(times_a[idx_a]['team']['logo'], width=60)
-            temporada_a = st.selectbox("Selecione a temporada do Time A", options=[2020,2021,2022,2023,2024,2025], key="temporada_a")
+            if len(times_a) > 0:
+                def format_time_a(i):
+                    t = times_a[i]['team']
+                    return f"{t['name']} ({t['country']}, fundado em {t['founded']})"
+                idx_a = st.selectbox("Selecione o Time A", options=range(len(times_a)), format_func=format_time_a, key="select_time_a")
+                st.image(times_a[idx_a]['team']['logo'], width=60)
+                temporada_a = st.selectbox("Selecione a temporada do Time A", options=[2020,2021,2022,2023,2024,2025], key="temporada_a")
+            else:
+                st.info("Nenhum time válido encontrado para seleção.")
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_a_nome:
@@ -91,12 +94,15 @@ with abas[0]:
         if erro_b:
             st.error(erro_b)
         elif times_b:
-            def format_time_b(i):
-                t = times_b[i]['team']
-                return f"{t['name']} ({t['country']}, fundado em {t['founded']})"
-            idx_b = st.selectbox("Selecione o Time B", options=range(len(times_b)), format_func=format_time_b, key="select_time_b")
-            st.image(times_b[idx_b]['team']['logo'], width=60)
-            temporada_b = st.selectbox("Selecione a temporada do Time B", options=[2020,2021,2022,2023,2024,2025], key="temporada_b")
+            if len(times_b) > 0:
+                def format_time_b(i):
+                    t = times_b[i]['team']
+                    return f"{t['name']} ({t['country']}, fundado em {t['founded']})"
+                idx_b = st.selectbox("Selecione o Time B", options=range(len(times_b)), format_func=format_time_b, key="select_time_b")
+                st.image(times_b[idx_b]['team']['logo'], width=60)
+                temporada_b = st.selectbox("Selecione a temporada do Time B", options=[2020,2021,2022,2023,2024,2025], key="temporada_b")
+            else:
+                st.info("Nenhum time válido encontrado para seleção.")
         else:
             st.warning("Nenhum time encontrado. Veja sugestões abaixo ou tente nomes alternativos:")
             if buscar and time_b_nome:
