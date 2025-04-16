@@ -65,7 +65,7 @@ with abas[0]:
         if erro_a:
             st.error(erro_a)
         elif times_a:
-            opcoes_a = [f"{t['team']['name']} ({t['team']['country']}, {t['league']['name']})" for t in times_a]
+            opcoes_a = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_a]
             idx_a = st.selectbox("Selecione o Time A", options=range(len(opcoes_a)), format_func=lambda i: opcoes_a[i])
             st.image(times_a[idx_a]['team']['logo'], width=60)
         else:
@@ -87,7 +87,7 @@ with abas[0]:
         if erro_b:
             st.error(erro_b)
         elif times_b:
-            opcoes_b = [f"{t['team']['name']} ({t['team']['country']}, {t['league']['name']})" for t in times_b]
+            opcoes_b = [f"{t['team']['name']} ({t['team']['country']}, fundado em {t['team']['founded']})" for t in times_b]
             idx_b = st.selectbox("Selecione o Time B", options=range(len(opcoes_b)), format_func=lambda i: opcoes_b[i])
             st.image(times_b[idx_b]['team']['logo'], width=60)
         else:
